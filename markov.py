@@ -4,14 +4,17 @@ import sys
 from random import choice
 
 
-def open_and_read_file(file_path):
+def open_and_read_file(file_path_1, file_path_2):
     """Take file path as string; return text as string.
 
     Takes a string that is a file path, opens the file, and turns
     the file's contents as one string of text.
     """
 
-    the_file = open(file_path).read()
+    the_file_1 = open(file_path_1).read()
+    the_file_2 = open(file_path_2).read()
+
+    the_file = the_file_1 + the_file_2
 
     return the_file
 
@@ -74,10 +77,25 @@ def make_text(chains):
 
     words = []
 
-    random_tuple = choice(chains.keys())
+    list_of_starting_capitals = []
+
+    for chain in chains:
+        if chain[0].istitle():
+            list_of_starting_capitals.append(chain)
+
+    random_tuple = choice(list_of_starting_capitals)
+
+    words = [random_tuple[0], random_tuple[1]]
+
     random_word = choice(chains[random_tuple])
 
+    list_of_punctuation = ["/", "?", "!", "."]
+
     while random_word is not None:
+
+        if random_word[-1] in list_of_punctuation:
+            words.append(random_word)
+            break
 
         words.append(random_word)
 
@@ -93,12 +111,13 @@ def make_text(chains):
 
 
 input_path = sys.argv[1]
+input_path_2 = sys.argv[2]
 
 # Open the file and turn it into one long string
-input_text = open_and_read_file(input_path)
+input_text = open_and_read_file(input_path, input_path_2)
 
 # Get a Markov chain
-chains = make_chains(input_text, 5)
+chains = make_chains(input_text, 2)
 
 # Produce random text
 random_text = make_text(chains)
