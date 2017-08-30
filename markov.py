@@ -1,5 +1,6 @@
 """Generate Markov text from text files."""
 
+import sys
 from random import choice
 
 
@@ -15,7 +16,7 @@ def open_and_read_file(file_path):
     return the_file
 
 
-def make_chains(text_string):
+def make_chains(text_string, n):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -24,7 +25,7 @@ def make_chains(text_string):
 
     For example:
 
-        >>> chains = make_chains("hi there mary hi there juanita")
+        >>> chains = make_chains("hi there mary hi there juanita hi there buddy stue")
 
     Each bigram (except the last) will be a key in chains:
 
@@ -43,16 +44,22 @@ def make_chains(text_string):
 
     chains = {}
 
-    for i in range(len(words) - 1):
+    for i in range(len(words) - n):
 
-        tuple_key = (words[i], words[i + 1])
+        tuple_key = []
+
+        for x in range(n):
+
+            tuple_key.append(words[x+i])
+
+        tuple_key = tuple(tuple_key)
 
         chains.setdefault(tuple_key, [])
 
-        if i == (len(words) - 2):
+        if i == (len(words) - n):
             chains[tuple_key].append(None)
         else:
-            chains[tuple_key].append(words[i + 2])
+            chains[tuple_key].append(words[i + n])
 
         # elif (words[i], words[i + 1]) in chains:
         #     chains[(words[i], words[i + 1])].append(words[i + 2])
@@ -70,36 +77,34 @@ def make_text(chains):
     random_tuple = choice(chains.keys())
     random_word = choice(chains[random_tuple])
 
-    while random_word != None:
+    while random_word is not None:
 
         words.append(random_word)
 
-        random_tuple = (random_tuple[1], random_word)
+        random_tuple = list(random_tuple)
+
+        random_tuple.append(random_tuple[1:])
+
+        random_tuple.append(random_word)
+
+        random_tuple = tuple(random_tuple)
+
         random_word = choice(chains[random_tuple])
-
-
-
-        #new_random_key = choice(chains[new_tuple])
-
-
-
-
-
 
     return " ".join(words)
 
 
-input_path = "gettysburg.txt"
+input_path = sys.argv[1]
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text)
+chains = make_chains(input_text, 3)
 
-#print chains
+print chains
 
 # Produce random text
-random_text = make_text(chains)
+#random_text = make_text(chains)
 
-print random_text
+#print random_text
