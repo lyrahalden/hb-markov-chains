@@ -25,7 +25,7 @@ def make_chains(text_string, n):
 
     For example:
 
-        >>> chains = make_chains("hi there mary hi there juanita hi there buddy stue")
+        >>> chains = make_chains("hi there mary hi there juanita")
 
     Each bigram (except the last) will be a key in chains:
 
@@ -44,7 +44,7 @@ def make_chains(text_string, n):
 
     chains = {}
 
-    for i in range(len(words) - n):
+    for i in range(len(words) - (n-1)):
 
         tuple_key = []
 
@@ -83,9 +83,7 @@ def make_text(chains):
 
         random_tuple = list(random_tuple)
 
-        random_tuple.append(random_tuple[1:])
-
-        random_tuple.append(random_word)
+        random_tuple = (random_tuple[1:] + [random_word])
 
         random_tuple = tuple(random_tuple)
 
@@ -100,11 +98,9 @@ input_path = sys.argv[1]
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text, 3)
-
-print chains
+chains = make_chains(input_text, 5)
 
 # Produce random text
-#random_text = make_text(chains)
+random_text = make_text(chains)
 
-#print random_text
+print random_text
