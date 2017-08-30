@@ -72,10 +72,9 @@ def make_text(chains):
 
     while random_word != None:
 
+        words.append(random_word)
+
         random_tuple = (random_tuple[1], random_word)
-
-        words.extend(random_tuple[1], random_word)
-
         random_word = choice(chains[random_tuple])
 
 
@@ -90,7 +89,7 @@ def make_text(chains):
     return " ".join(words)
 
 
-input_path = "green-eggs.txt"
+input_path = "gettysburg.txt"
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
@@ -98,9 +97,9 @@ input_text = open_and_read_file(input_path)
 # Get a Markov chain
 chains = make_chains(input_text)
 
-print chains
+#print chains
 
 # Produce random text
-#random_text = make_text(chains)
+random_text = make_text(chains)
 
-#print random_text
+print random_text
