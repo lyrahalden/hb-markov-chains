@@ -1,7 +1,14 @@
 """Generate Markov text from text files."""
 
 import sys
+import twitter
+import os
 from random import choice
+
+api = twitter.Api(consumer_key=os.environ['TWITTER_CONSUMER_KEY'],
+                  consumer_secret=os.environ["TWITTER_CONSUMER_SECRET"],
+                  access_token_key=os.environ["TWITTER_ACCESS_TOKEN_KEY"],
+                  access_token_secret=os.environ["TWITTER_ACCESS_TOKEN_SECRET"])
 
 
 def open_and_read_file(file_path_1, file_path_2):
@@ -110,6 +117,26 @@ def make_text(chains):
     return " ".join(words)
 
 
+def tweet(chains):
+
+    user_choice = raw_input("Enter to tweet. q to quit >>> ")
+
+    while user_choice != 'q':
+        random_text = make_text(chains)
+        new_tweet = random_text[:140]
+        print new_tweet
+        user_choice = raw_input("Do you want to publish this tweet? [y/n] >>> ")
+
+        if user_choice == 'y':
+            print api.VerifyCredentials()
+            status = api.PostUpdate(new_tweet)
+            print status.text
+            print "Your tweet was published!"
+            user_choice = raw_input("Enter to tweet. q to quit >>> ")
+        else:
+            user_choice = raw_input("Enter to tweet. q to quit >>> ")
+
+
 input_path = sys.argv[1]
 input_path_2 = sys.argv[2]
 
@@ -120,6 +147,16 @@ input_text = open_and_read_file(input_path, input_path_2)
 chains = make_chains(input_text, 2)
 
 # Produce random text
-random_text = make_text(chains)
+#random_text = make_text(chains)
 
-print random_text
+#print random_text[:140]
+
+tweet(chains)
+
+
+# This will print info about credentials to make sure
+# they're correct
+
+
+# If you updated secrets.sh, you can go to your Twitter
+# timeline to see it.
